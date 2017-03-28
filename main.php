@@ -148,3 +148,205 @@ session_start();
             </tr>";            
         }
     }
+    
+    function getCategory($val1,$val2)
+    {
+        echo"
+        <body>
+        <table class = 'table-fill'>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Add To Cart</th>
+            </tr>
+        </thead>
+        <tbody>";
+        $servername = getenv('IP');
+        $dbPort = 3306;
+        $database = "Overwatch";
+        $username = getenv('C9_USER');
+        $password = "";
+        $dbConn = new PDO("mysql:host=$servername;port=$dbPort;dbname=$database", $username, $password);
+        $dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if($val2 == 1){
+            $sql = "SELECT Product.*
+                FROM Product
+                WHERE Product.productTypeId= 
+                (SELECT ProductType.productTypeId
+                FROM ProductType
+                WHERE ProductType.productType ='". $val1."')
+                ORDER BY Product.price DESC";
+        }else if($val2 == 2){
+            $sql = "SELECT Product.*
+                FROM Product
+                WHERE Product.productTypeId= 
+                (SELECT ProductType.productTypeId
+                FROM ProductType
+                WHERE ProductType.productType ='". $val1."')
+                ORDER BY Product.price ASC";
+        }else{
+            $sql = "SELECT Product.*
+                FROM Product
+                WHERE Product.productTypeId= 
+                (SELECT ProductType.productTypeId
+                FROM ProductType
+                WHERE ProductType.productType ='". $val1."')";
+        }
+        $stmt = $dbConn->prepare($sql);
+        $stmt->execute ();
+        $val = 0;
+        while ($row = $stmt->fetch()){
+            $item = $row['productId'];
+                echo "
+                <tr>
+                    <td>
+                        <div class = \"popup\" onclick = \"myFunction($val)\">
+                         ".$row['productName']."
+                        <span class=\"popuptext\"id=$val>".$row['desc']."</span>
+                        </div>
+                    </td>
+                        <td>"."$".$row['price']."</td>
+                        <td> 
+                            <a class = \"button\"href = 'addCart.php?id=$item'> Add</a>
+                        </td>
+                </tr>";
+                $val = $val+1;
+               
+        }        
+    }
+function getCharacter($val1,$val2)
+    {
+        echo"
+        <body>
+        <table class = 'table-fill'>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Add To Cart</th>
+            </tr>
+        </thead>
+        <tbody>";
+        $servername = getenv('IP');
+        $dbPort = 3306;
+        $database = "Overwatch";
+        $username = getenv('C9_USER');
+        $password = "";
+        $dbConn = new PDO("mysql:host=$servername;port=$dbPort;dbname=$database", $username, $password);
+        $dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if($val2 ==1 )
+        {
+            $sql = "SELECT Product.*
+                FROM Product
+                WHERE Product.characterId = 
+                (SELECT Characters.characterId
+                FROM Characters
+                WHERE Characters.name ='". $val1."')
+                ORDER BY Product.price DESC";
+        }
+        else if($val2 == 2)
+        {
+            $sql = "SELECT Product.*
+                FROM Product
+                WHERE Product.characterId = 
+                (SELECT Characters.characterId
+                FROM Characters
+                WHERE Characters.name ='". $val1."')
+                ORDER BY Product.price ASC";
+        }
+        else{
+            $sql = "SELECT Product.*
+                FROM Product
+                WHERE Product.characterId = 
+                (SELECT Characters.characterId
+                FROM Characters
+                WHERE Characters.name ='". $val1."')";
+        }
+        $stmt = $dbConn->prepare($sql);
+        $stmt->execute ();
+        $val = 0;
+        while ($row = $stmt->fetch())  
+        {
+                    $item = $row['productId'];
+                echo "
+                <tr>
+                    <td>
+                        <div class = \"popup\" onclick = \"myFunction($val)\">
+                         ".$row['productName']."
+                        <span class=\"popuptext\" id=$val>".$row['desc']."</span>
+                        </div>
+                    </td>
+                        <td>"."$".$row['price']."</td>
+                        <td> 
+                            <a class = \"button\" href = 'addCart.php?id=$item'> Add</a>
+                        </td>
+                </tr>";
+                $val = $val+1;
+        }        
+    }
+    function getPrice($val,$max)
+    {
+        echo"
+        <body>
+        <table class = 'table-fill'>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Add To Cart</th>
+            </tr>
+        </thead>
+        <tbody>";
+        $servername = getenv('IP');
+        $dbPort = 3306;
+        $database = "Overwatch";
+        $username = getenv('C9_USER');
+        $password = "";
+        $dbConn = new PDO("mysql:host=$servername;port=$dbPort;dbname=$database", $username, $password);
+        $dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if($val ==1 && $max != -1)
+        {
+            $sql = "SELECT Product.*
+                    FROM Product
+                    WHERE Product.price <= $max
+                    ORDER BY Product.price DESC";
+        } 
+        else if($val == 2 && $max != -1)
+        {
+            $sql = "SELECT Product.*
+                    FROM Product
+                    WHERE  Product.price <= $max
+                    ORDER BY Product.price ASC";
+        }
+        else if($max != -1){
+            $sql = "SELECT Product.*
+                    FROM Product
+                    WHERE  Product.price <= $max";
+        }
+        else {
+                 return;       
+        }
+        $stmt = $dbConn->prepare($sql);
+        $stmt->execute ();
+        $val = 0;
+        while ($row = $stmt->fetch())  
+        {
+                    $item = $row['productId'];
+                echo "
+                <tr>
+                    <td>
+                        <div class = \"popup\" onclick = \"myFunction($val)\">
+                         ".$row['productName']."
+                        <span class=\"popuptext\" id=$val>".$row['desc']."</span>
+                        </div>
+                    </td>
+                        <td>"."$".$row['price']."</td>
+                        <td> 
+                            <a class = \"button\" href = 'addCart.php?id=$item'> Add</a>
+                        </td>
+                </tr>";
+                $val = $val+1;
+        }
+    }
+?>
